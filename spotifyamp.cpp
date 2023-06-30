@@ -2295,8 +2295,8 @@ void EqWindow::DrawGraph() {
 
   if (!got_colors_) {
     got_colors_ = true;
-    for(int bv = 0; bv < 28; bv++)
-      colors_[bv] = GetBitmapPixel(res.eqmain, 19 + (bv % 14) * 15, 195 + (bv / 14) * 65);
+    for(int bv = 0; bv < 19; bv++)
+      colors_[bv] = GetBitmapPixel(res.eqmain, 115, 294 + bv);
   }
 
   int ly = 17 + ((eqvals_[0] + 127) * 18 + 127) / 254;
@@ -2307,10 +2307,10 @@ void EqWindow::DrawGraph() {
   for(int i = 0; i < 109; i++) {
     plSplineGetPoint(&s, i * (1.0f/12.0f) + 1.0f, &out);
     int pixval = Clamp((int)floor(out), 0, 18);
-    SetPixel(88 + i, 17 + pixval, colors_[27-pixval * 27 / 18]);
+    SetPixel(88 + i, 17 + pixval, colors_[18-pixval]);
     while (oldpix >= 0 && oldpix != pixval) {
       oldpix += (oldpix < pixval) ? 1 : -1;
-      SetPixel(88 + i - 1, 17 + oldpix, colors_[27-oldpix * 27 / 18]);
+      SetPixel(88 + i - 1, 17 + oldpix, colors_[18-oldpix]);
     }
     oldpix = pixval;
   }

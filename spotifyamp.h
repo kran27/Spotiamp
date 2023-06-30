@@ -262,7 +262,7 @@ private:
 
 	int8 eqvals_[11]; // -127..127
 
-	uint32 colors_[28];
+	uint32 colors_[19];
 };
 
 class GenWindow : public PlatformWindow {
