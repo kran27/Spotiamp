@@ -1,4 +1,5 @@
 # Spotiamp
+![UI](https://raw.githubusercontent.com/kran27/Spotiamp/main/uidemo.png)
 Features:
 - New Modern Theme
 - Fixed Album Art Support
