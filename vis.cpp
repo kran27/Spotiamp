@@ -156,30 +156,30 @@ unsigned int viscolors[24];
 
 extern const unsigned int default_viscolors[24];
 const unsigned int default_viscolors[24] = {
-  MK(0,0,0), // color 0 = black
-  MK(24,33,41), // color 1 = grey for dots
-  MK(239,49,16), // color 2 = top of spec
-  MK(206,41,16), // 3
-  MK(214,90,0), // 4
-  MK(214,102,0), // 5
-  MK(214,115,0), // 6
-  MK(198,123,8), // 7
-  MK(222,165,24), // 8
-  MK(214,181,33), // 9
-  MK(189,222,41), // 10
-  MK(148,222,33), // 11
-  MK(41,206,16), // 12
-  MK(50,190,16), // 13
-  MK(57,181,16), // 14
-  MK(49,156,8),  // 15
-  MK(41,148,0),  // 16
-  MK(24,132,8),   // 17 = bottom of spec
-  MK(255,255,255), // 18 = osc 1
-  MK(214,214,222), // 19 = osc 2 (slightly dimmer)
-  MK(181,189,189), // 20 = osc 3
-  MK(160,170,175),  // 21 = osc 4
-  MK(148,156,165),  // 22 = osc 4
-  MK(150, 150, 150), // 23 = analyzer peak dots
+  MK(24,24,24), // color 0 = black
+  MK(24,24,24), // color 1 = grey for dots
+  MK(29,185,84), // color 2 = top of spec
+  MK(29,185,84), // 3
+  MK(29,185,84), // 4
+  MK(29,185,84), // 5
+  MK(29,185,84), // 6
+  MK(29,185,84), // 7
+  MK(29,185,84), // 8
+  MK(29,185,84), // 9
+  MK(29,185,84), // 10
+  MK(29,185,84), // 11
+  MK(29,185,84), // 12
+  MK(29,185,84), // 13
+  MK(29,185,84), // 14
+  MK(29,185,84),  // 15
+  MK(29,185,84),  // 16
+  MK(29,185,84),   // 17 = bottom of spec
+  MK(186,186,186), // 18 = osc 1
+  MK(186,186,186), // 19 = osc 2 (slightly dimmer)
+  MK(186,186,186), // 20 = osc 3
+  MK(186,186,186),  // 21 = osc 4
+  MK(186,186,186),  // 22 = osc 4
+  MK(186,186,186), // 23 = analyzer peak dots
 };
 
 

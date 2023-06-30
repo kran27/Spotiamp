@@ -104,7 +104,9 @@ void PlatformWindow::StretchBlit(int dx, int dy, int w, int h, Bitmap *src, int 
     selected_bmp_ = srcb;
     SelectObject(srcdc_, srcb);
   }
-  StretchBlt(bmpdc_, dx, dy, w, h, srcdc_, sx, sy, sw, sh, SRCCOPY);
+  // Set the stretch mode to HALFTONE
+  SetStretchBltMode(bmpdc_, HALFTONE);
+  StretchBlt(bmpdc_, dx, dy, w, h, srcdc_, sx, sy, sw, sh, SRCCOPY | HALFTONE);
 }
 
 void PlatformWindow::Fill(int x, int y, int w, int h, unsigned int color) {
@@ -296,8 +298,8 @@ void PlatformWindow::InitDraggingOrSizing() {
 void PlatformWindow::Create(PlatformWindow *owner_window) {
   PlatformWindowBase::Create(owner_window);
                                                                                
-  hwnd_ = ::CreateWindowEx(owner_window ? 0 : WS_EX_WINDOWEDGE, owner_window ? L"SpotiambWnd" : L"SpotiambMain", 
-    owner_window ? L"" : L"Spotiamb", 
+  hwnd_ = ::CreateWindowEx(owner_window ? 0 : WS_EX_WINDOWEDGE, owner_window ? L"SpotiampWnd" : L"SpotiampMain", 
+    owner_window ? L"" : L"Spotiamp", 
     owner_window ? WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE : 
                    WS_CAPTION | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_MINIMIZEBOX | WS_SYSMENU,
     CW_USEDEFAULT, 200, width_ << (int)double_size_, height_ << (int)double_size_,
@@ -332,11 +334,11 @@ ATOM MyRegisterClass(HINSTANCE hInstance) {
   wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
   wcex.hbrBackground	= NULL;
   wcex.lpszMenuName	= NULL;
-  wcex.lpszClassName	= L"SpotiambWnd";
+  wcex.lpszClassName	= L"SpotiampWnd";
   wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SPOTIFYAMP));
   RegisterClassEx(&wcex);
 
-  wcex.lpszClassName	= L"SpotiambMain";
+  wcex.lpszClassName	= L"SpotiampMain";
   RegisterClassEx(&wcex);
      
   wcex.cbSize = sizeof(WNDCLASSEX);
@@ -349,7 +351,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance) {
   wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
   wcex.hbrBackground	= GetStockBrush(BLACK_BRUSH);
   wcex.lpszMenuName	= NULL;
-  wcex.lpszClassName	= L"SpotiambVis";
+  wcex.lpszClassName	= L"SpotiampVis";
   wcex.hIconSm		= NULL;
   RegisterClassEx(&wcex);
   return true;
@@ -555,7 +557,7 @@ HWND PlatformWindow::SetVisualizer(int x, int y, int w, int h) {
     h *= 2;
   }
   if (vis_hwnd_ == 0) {
-    vis_hwnd_ = ::CreateWindowEx(0, L"SpotiambVis", NULL, WS_CHILD | WS_VISIBLE, 
+    vis_hwnd_ = ::CreateWindowEx(0, L"SpotiampVis", NULL, WS_CHILD | WS_VISIBLE, 
       x, y, w, h, hwnd_, NULL, GetModuleHandle(NULL), NULL);
   } else {
     SetWindowPos(vis_hwnd_, NULL, x, y, w, h, SWP_NOZORDER| SWP_NOACTIVATE| SWP_NOREPOSITION);
@@ -872,7 +874,7 @@ void DoAutoUpdateStuff(PlatformWindow *w) {
   g_auto_update_available = false;
 
   if (g_auto_update_msg.size() && g_auto_update_url.size()) {
-    const char *caption = g_auto_update_caption.size() ? g_auto_update_caption.c_str() : "Spotiamb";
+    const char *caption = g_auto_update_caption.size() ? g_auto_update_caption.c_str() : "Spotiamp";
     if ((g_auto_update_flags & 1) == 0) {
       if (MessageBoxA(hWnd, g_auto_update_msg.c_str(), caption, MB_ICONINFORMATION | MB_YESNO) == IDYES) {
         if (memcmp(g_auto_update_url.c_str(), "http://", 7) == 0)

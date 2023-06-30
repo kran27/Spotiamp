@@ -3,10 +3,16 @@
 
 #include "stdafx.h"
 #include "spotifyamp.h"
+
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <string>
 #include <vector>
+#include <wininet.h>
+
+#include "tiny_spotify/tiny_spotify.h"
+
 extern "C" {
 #include "shoutcast.h"
 };
@@ -267,11 +273,11 @@ static void LoadSkin(const char *skinfile) {
     }
   }
 
-  g_color_normal = 0x00ff00;
+  g_color_normal = 0xbababa;
   g_color_current = 0xffffff;
-  g_color_bg_normal = 0x000000;
-  g_color_bg_selected = 0xff0000;
-  g_playlist_font = "Arial";
+  g_color_bg_normal = 0x181818;
+  g_color_bg_selected = 0x323232;
+  g_playlist_font = "Montserrat Medium";
 
   if (PlatformLoadString("pledit.txt", &vis_str)) {
     char *lines = &vis_str[0];
@@ -332,7 +338,7 @@ bool MainWindow::Load() {
   tsp_ = TspCreate(machine_id,
                    MyCallback, this,
                    g_appkey, sizeof(g_appkey),
-                   "Spotiamb " VERSION_STR,
+                   "Spotiamp",
                    kTspCreate_DownloadRootlist, &limits, NULL);
 
   if (!tsp_) {
@@ -354,7 +360,7 @@ bool MainWindow::Load() {
   }
   free(username);
 
-  TspSetDisplayName(tsp_, "Spotiamb " VERSION_STR);
+  TspSetDisplayName(tsp_, "Spotiamp");
   TspSetAudioCallback(tsp_, &MyWavPush, NULL);
   TspPlayerSetDevice(tsp_, kTspDeviceIdAuto, 0);
 
@@ -1031,14 +1037,14 @@ void MainWindow::Perform(int cmd) {
     break;
   case CMD_ABOUT: {
     char mesg[4096];
-    const char *ver = TspGetVersionString() + sizeof("Spotiamb-") - 1;
-    sprintf(mesg, "Spotiamb  (version %s)\r\nCopyright \xa9 2013, Spotify\r\n\r\nThis program is a tribute to Winamp :)\r\n\r\n"
-      "Thanks to the fantastic team at the Spotify Gothenburg office!\r\nThis program was made by Ludde.\r\n\r\nFor assistance, visit #Spotiamb on EFnet.", ver);
-    MsgBox(mesg, "About Spotiamb", MB_ICONINFORMATION);
+    const char *ver = TspGetVersionString() + sizeof("Spotiamp");
+    sprintf(mesg, "Spotiamp  (version %s)\r\nCopyright \xa9 2013, Spotify\r\n\r\nThis program is a tribute to Winamp :)\r\n\r\n"
+      "Thanks to the fantastic team at the Spotify Gothenburg office!\r\nThis program was made by Ludde.\r\n\r\nFor assistance, visit @kran27 on GitHub", ver);
+    MsgBox(mesg, "About Spotiamp", MB_ICONINFORMATION);
     break;
   }
   case CMD_LEGAL0:
-    MsgBox("Spotiamb uses third party source code based on the BSD license:\r\nLibtremor - Copyright (c) 2002, Xiph.org Foundation", "Spotiamb Open Source Software", MB_ICONINFORMATION);
+    MsgBox("Spotiamp uses third party source code based on the BSD license:\r\nLibtremor - Copyright (c) 2002, Xiph.org Foundation", "Spotiamp Open Source Software", MB_ICONINFORMATION);
     break;
   case CMD_LEGAL1:
     OpenUrl("https://www.spotify.com/legal/end-user-agreement/");
@@ -1187,12 +1193,12 @@ void MainWindow::MainLoop() {
       connect_error_ = false;
       TspError error = TspGetConnectionError(tsp_);
       if (error == kTspErrorBadCredentials) {
-        MsgBox("Bad username / password.", "Spotiamb", MB_ICONEXCLAMATION);
+        MsgBox("Bad username / password.", "Spotiamp", MB_ICONEXCLAMATION);
         ShowLoginDialog();
       } else if (error == kTspErrorPremiumRequired) {
-        int r = MsgBox("You need Spotify Premium to use Spotiamb.\r\nDo you want to sign up now?", "Spotiamb", MB_ICONEXCLAMATION | MB_YESNOCANCEL);
+        int r = MsgBox("You need Spotify Premium to use Spotiamp.\r\nDo you want to sign up now?", "Spotiamp", MB_ICONEXCLAMATION | MB_YESNOCANCEL);
         if (r == IDYES)
-          OpenUrl("http://spotiamb.com/premium/");
+          OpenUrl("https://www.spotify.com/ca-en/premium/");
         if (r != IDCANCEL)
           ShowLoginDialog();
       }
@@ -1201,7 +1207,7 @@ void MainWindow::MainLoop() {
     static bool g_showed_mp3_error;
     if (Mp3CompressorHadError() && !g_showed_mp3_error) {
       g_showed_mp3_error = true;
-      if (MsgBox("There was a problem starting the MP3 codec. Do you want to read a guide?", "Spotiamb", MB_ICONEXCLAMATION | MB_OKCANCEL) == IDOK) {
+      if (MsgBox("There was a problem starting the MP3 codec. Do you want to read a guide?", "Spotiamp", MB_ICONEXCLAMATION | MB_OKCANCEL) == IDOK) {
         OpenUrl("http://spotiamb.com/mp3guide.html");
       }
     }
@@ -2547,24 +2553,53 @@ void CoverArtWindow::OnClose() {
   main_window.SetCoverartVisible(false);
 }
 
-void CoverArtWindow::SetImage(const char *image) {
-  if (image == image_) return;
-  image_ = image;
-  image_needs_load_ = true;
-  if (!visible()) {
-    PlatformDeleteBitmap(bitmap_);
-    bitmap_ = NULL;
+void DownloadFile(const char* url, std::vector<char>& buffer) {
+  HINTERNET hInternet = InternetOpenA("FileDownloader", INTERNET_OPEN_TYPE_DIRECT, nullptr, nullptr, 0);
+  if (hInternet) {
+    HINTERNET hUrl = InternetOpenUrlA(hInternet, url, nullptr, 0, INTERNET_FLAG_RELOAD, 0);
+    if (hUrl) {
+      char tempBuffer[1024];
+      DWORD bytesRead;
+      while (InternetReadFile(hUrl, tempBuffer, sizeof(tempBuffer), &bytesRead) && bytesRead > 0) {
+        buffer.insert(buffer.end(), tempBuffer, tempBuffer + bytesRead);
+      }
+      std::cout << "File downloaded successfully." << std::endl;
+      InternetCloseHandle(hUrl);
+    } else {
+      std::cout << "Failed to open URL: " << url << std::endl;
+    }
+    InternetCloseHandle(hInternet);
+  } else {
+    std::cout << "Failed to initialize WinINet" << std::endl;
   }
-  Load();
 }
 
+void CoverArtWindow::SetImage(const char* image) {
+	if (image == image_) return;
+	image_ = image;
+	if (!visible()) {
+		PlatformDeleteBitmap(bitmap_);
+		bitmap_ = NULL;
+	}
+
+	std::string spotifyImageUrl = image_;
+	std::string imageUrl = "https://i.scdn.co/image/" + spotifyImageUrl.substr(14); // Make URL from the URI
+
+    buffer_.clear();
+    DownloadFile(imageUrl.c_str(), buffer_);
+
+	Load();
+	Repaint();
+}
+
+#include <fstream>
+#include <vector>
+
 void CoverArtWindow::Load() {
-  if (!image_needs_load_ || !visible())
-    return;
-  image_needs_load_ = false;
-  accumulating_bytes_.clear();
-  TspDownloadImageCancel(main_window.tsp_, this);
-  TspDownloadImage(main_window.tsp_, image_.c_str(), this, kTspImageQuality_300);
+	if (image_ == "") { return; }
+
+	PlatformDeleteBitmap(bitmap_);
+	bitmap_ = PlatformLoadBitmapFromBuf(buffer_.data(), buffer_.size());
 }
 
 void CoverArtWindow::GotImagePart(TspImageDownloadResult *part) {

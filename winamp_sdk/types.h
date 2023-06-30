@@ -47,7 +47,6 @@ typedef unsigned long FOURCC;
 	typedef __int64 int64_t;
 	typedef __int32 int32_t;
 	typedef __int16 int16_t;
-	typedef __int8  int8_t;
 #else
 #include <stdint.h>
 #include <stddef.h>

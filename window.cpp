@@ -330,7 +330,7 @@ extern char exepath[MAX_PATH];
 const char *GetIniFilePath(){return inifile;}
 
 void PrefInit() {
-  sprintf(inifile, "%sSpotiamb.ini", exepath);
+  sprintf(inifile, "%sSpotiamp.ini", exepath);
   // If Spotiamp exists, use it.
   if (GetFileAttributesA(inifile) == INVALID_FILE_ATTRIBUTES) {
     // Try to make it.
@@ -339,9 +339,9 @@ void PrefInit() {
       // Use profile directory instead.
       strcpy(inifile, "C:");
       SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL, 0, inifile);
-      strcat(inifile, "\\Spotiamb");
+      strcat(inifile, "\\Spotiamp");
       CreateDirectoryA(inifile, NULL);
-      strcat(inifile, "\\Spotiamb.ini");
+      strcat(inifile, "\\Spotiamp.ini");
     } else {
       CloseHandle(h);
     }
