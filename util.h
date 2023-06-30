@@ -1,0 +1,1 @@
+static inline int IntMin(int a, int b) { return a < b ? a : b; }
