@@ -175,25 +175,40 @@ void PlatformWindowBase<PlatformWindow>::Create(PlatformWindow *owner_window) {
 
 
 template<>
-const char *PlatformWindowBase<PlatformWindow>::GetPositionKey(const char *side) {
-  static char leftKey[12]; 
-  snprintf(leftKey, sizeof(leftKey), "window_%d_%s", id_, side);
-  return leftKey;
+const char *PlatformWindowBase<PlatformWindow>::GetWindowKey(const char *key) {
+  static char windowKey[12]; 
+  snprintf(windowKey, sizeof(windowKey), "window_%d_%s", id_, key);
+  return windowKey;
 }
 
 
 template<>
 void PlatformWindowBase<PlatformWindow>::SavePosition() {
-  PrefWriteInt(screen_rect_.left, GetPositionKey("l"));
-  PrefWriteInt(screen_rect_.top, GetPositionKey("t"));
+  PrefWriteInt(screen_rect_.left, GetWindowKey("l"));
+  PrefWriteInt(screen_rect_.top, GetWindowKey("t"));
 }
 
 
 template<>
 void PlatformWindowBase<PlatformWindow>::LoadPosition(int def_left, int def_top) {
-  int left(PrefReadInt(def_left, GetPositionKey("l")));
-  int top(PrefReadInt(def_top, GetPositionKey("t")));
+  int left(PrefReadInt(def_left, GetWindowKey("l")));
+  int top(PrefReadInt(def_top, GetWindowKey("t")));
   Move(left, top);
+}
+
+
+template<>
+void PlatformWindowBase<PlatformWindow>::SaveSize() {
+  PrefWriteInt(width_, GetWindowKey("w"));
+  PrefWriteInt(height_, GetWindowKey("h"));
+}
+
+
+template<>
+void PlatformWindowBase<PlatformWindow>::LoadSize(int def_width, int def_height) {
+  int width(PrefReadInt(def_width, GetWindowKey("w")));
+  int height(PrefReadInt(def_height, GetWindowKey("h")));
+  Resize(width, height);
 }
 
 

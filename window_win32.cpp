@@ -249,6 +249,7 @@ void PlatformWindow::MoveAllWindows() {
                       r->right - r->left, r->bottom - r->top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
       w->need_move_ = false;
       w->SavePosition();
+      w->SaveSize();
     }
   }
   EndDeferWindowPos(dp);

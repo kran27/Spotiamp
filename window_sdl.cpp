@@ -138,6 +138,8 @@ void PlatformWindow::MoveAllWindows() {
       SDL_SetWindowPosition(w->window_, r->left, r->top);
       SDL_SetWindowSize(w->window_, r->right - r->left, r->bottom - r->top);
       w->need_move_ = false;
+      w->SavePosition();
+      w->SaveSize();
     }
   }
 }

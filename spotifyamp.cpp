@@ -1522,7 +1522,6 @@ PlaylistWindow::PlaylistWindow(MainWindow *main_window) {
   id_ = 1;
   main_window_ = main_window;
   hover_button_ = -1;
-  Resize(WND_MAIN_W, WND_MAIN_H * 3);
 }
 
 PlaylistWindow::~PlaylistWindow() {
@@ -1531,6 +1530,7 @@ PlaylistWindow::~PlaylistWindow() {
 
 void PlaylistWindow::Load() {
   LoadPosition(main_window.screen_rect()->left, main_window.screen_rect()->bottom);
+  LoadSize(WND_MAIN_W, WND_MAIN_H * 3);
   SetCompact(PrefReadBool(false, "pl.compact"));
   font_size_ = PrefReadInt(10, "pl.font_size");
   row_height_ = 13;

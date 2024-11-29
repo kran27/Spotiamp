@@ -20,6 +20,9 @@ class PlatformWindowBase {
   void SavePosition();
   void LoadPosition(int def_left, int def_top);
 
+  void SaveSize();
+  void LoadSize(int def_width, int def_height);
+
   // Double all pixels
   void SetDoubleSize(bool v);
   bool double_size() const { return double_size_; }
@@ -64,7 +67,7 @@ class PlatformWindowBase {
   Rect screen_rect_;
   T *next_, *owner_;
  private:
-  const char *GetPositionKey(const char *side);
+  const char *GetWindowKey(const char *key);
 };
 
 #if defined(WITH_SDL)
